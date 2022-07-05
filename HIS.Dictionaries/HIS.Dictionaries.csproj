@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.11.1-dev-01397" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.1-dev-10301" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.2-dev-00890" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="AutoMapper" Version="11.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0-preview.5.22302.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\HIS.Common\HIS.Common.csproj" />
+	  <ProjectReference Include="..\HIS.Data\HIS.Data.csproj" />
+	</ItemGroup>
+</Project>
