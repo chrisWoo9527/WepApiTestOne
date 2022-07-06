@@ -3,8 +3,10 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using HIS.Common;
 using HIS.Common.AutoFacManager;
+using HIS.Common.FileManager;
 using HIS.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using System.Reflection;
 
@@ -31,12 +33,13 @@ builder.Services.AddLogging(loggingBuilder =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // 指定前段地址访问 
+/*
 builder.Services.AddCors(options =>
   options.AddDefaultPolicy(builder => builder.WithOrigins(
       new string[] { "http://localhost:3000" }).
       AllowAnyMethod().AllowAnyHeader().AllowCredentials())
 );
-
+       */
 
 // 替换内置的ServiceProviderFactory
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -77,7 +80,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 启动这东西 
+// 启动这东西   
+/*
 app.UseCors();
+*/
 
 app.Run();

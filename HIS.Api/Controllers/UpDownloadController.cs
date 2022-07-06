@@ -1,4 +1,4 @@
-﻿using HIS.Common;
+﻿using HIS.Common.FileManager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,31 +8,55 @@ namespace HIS.Api.Controllers
     [ApiController]
     public class UpDownloadController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        private readonly IFileService _fileService;
 
-        private readonly IConfiguration? _configuration;
-
-        public UpDownloadController(IConfiguration? configuration)
+        public UpDownloadController(IConfiguration configuration, IFileService fileService)
         {
             _configuration = configuration;
+            _fileService = fileService;
         }
 
+        /// <summary>
+        /// 文件上传下载
+        /// </summary>
+        /// <param name="file">文件流</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<string>> UploadFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return Content("文件流异常，请检查！");
 
+            string? FtpPath = _configuration.GetSection("Ftp").Value;
 
-            var path = Path.Combine(_configuration.GetSection("Ftp").Value, "His", file.FileName);
-
-            using (var steam = new FileStream(path, FileMode.OpenOrCreate))
+            if (string.IsNullOrEmpty(FtpPath))
             {
-                await file.CopyToAsync(steam);
+                return NotFound("Ftp配置文件异常");
             }
-            return "ok";
+
+            string path = Path.Combine(FtpPath, file.FileName);
+
+
+            var directoryPath = Path.GetDirectoryName(path);
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+
+            using (var steam = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                await file.OpenReadStream().CopyToAsync(steam);
+            }
+            return "Ok";
         }
 
 
+        /// <summary>
+        /// 文件下载
+        /// </summary>
+        /// <param name="fileName">文件名称(含后缀)</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Download(string fileName)
         {
@@ -41,7 +65,7 @@ namespace HIS.Api.Controllers
                 return Content("filename not present");
             }
 
-            var path = Path.Combine(_configuration.GetSection("Ftp").Value, "His", fileName);
+            var path = Path.Combine(_configuration.GetSection("Ftp").Value, fileName);
 
             var memory = new MemoryStream();
 
@@ -51,10 +75,20 @@ namespace HIS.Api.Controllers
             }
 
             memory.Position = 0;
-            return File(memory, FileHelper.GetContentType(path), Path.GetFileName(path));
+            return File(memory, FileContentType.GetContentType(path), fileName);
+        }
 
 
-
+        [HttpGet]
+        public ActionResult<List<FileInformation>> SelectFiles()
+        {
+            List<FileInformation> list = new List<FileInformation>();
+            var fileList = Directory.GetFiles(Path.Combine(_configuration.GetSection("Ftp").Value)).ToList();
+            fileList.ForEach(file =>
+            {
+                list.Add(_fileService.GetFileInformation(file));
+            });
+            return list;
         }
     }
 }
