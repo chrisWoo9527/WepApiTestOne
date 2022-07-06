@@ -65,6 +65,8 @@ builder.Services.AddDistributedRedisCache(options =>
     options.Configuration = builder.Configuration.GetSection("Cacheredis").Value;
 });
 
+//builder.Configuration.AddToMasuitTools();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

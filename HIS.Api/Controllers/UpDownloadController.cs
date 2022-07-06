@@ -1,6 +1,8 @@
-﻿using HIS.Common.FileManager;
+﻿using HIS.Common;
+using HIS.Common.FileManager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using HIS.Common;
 
 namespace HIS.Api.Controllers
 {
@@ -44,10 +46,10 @@ namespace HIS.Api.Controllers
                 Directory.CreateDirectory(directoryPath);
 
 
-            using (var steam = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            {
-                await file.OpenReadStream().CopyToAsync(steam);
-            }
+            //using (var steam = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            //{
+            await file.OpenReadStream().CopyToFileAsync(path);
+            //}
             return "Ok";
         }
 

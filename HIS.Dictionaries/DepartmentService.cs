@@ -5,7 +5,6 @@ using HIS.Data.DictionariesModel;
 using HIS.Dictionaries.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
